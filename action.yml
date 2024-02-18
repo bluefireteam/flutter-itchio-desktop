@@ -1,0 +1,139 @@
+name: 'Deploy Flutter Desktop builds to Itch.io'
+description: 'Automates the build and deployment of your Flutter desktop applications to Itch.io'
+author: 'bluefireteam'
+
+branding:
+  color: blue
+  icon: code
+
+inputs:
+  itchUsername:
+    description: 'The itch.io username'
+    required: true
+  itchGameId:
+    description: 'The game id on itch.io'
+    required: true
+  itchKey:
+    description: 'The buttler key of your itch.io account'
+    required: true
+  macOSAppName:
+    description: 'The name of .app file of your project. (e.g. "My App.app")'
+    required: true
+  workingDir:
+    description: 'The directory where the project is (default .)'
+    required: false
+    default: .
+
+jobs:
+  build_linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: subosito/flutter-action@v2
+
+      - run: sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+      - run: flutter build linux
+        workingDir: ${{inputs.workingDir}}
+      - name: Zips the build
+        uses: papeloto/action-zip@v1
+        with:
+          files: ${{inputs.workingDir}}/build/linux/x64/release/bundle/
+          dest: linux.zip
+      - name: Upload binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux
+          path: linux.zip
+
+  build_windows:
+    name: Build Windows
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: subosito/flutter-action@v2
+
+      - run: flutter build windows
+        workingDir: ${{inputs.workingDir}}
+      - name: Zips the build
+        uses: papeloto/action-zip@v1
+        with:
+          files: ${{inputs.workingDir}}/build/windows/runner/Release/
+          dest: windows.zip
+      - name: Upload binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows
+          path: windows.zip
+
+  build_osx:
+    name: Build OSX
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: subosito/flutter-action@v2
+
+      - run: flutter build macos
+        workingDir: ${{inputs.workingDir}}
+      - name: Zips the build
+        run: zip -r osx.zip ${{inputs.macOSAppName}}
+        workingDir: ${{inputs.workingDir}}
+      - name: Upload binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: osx
+          path: ${{inputs.workingDir}}/build/macos/Build/Products/Release/osx.zip
+
+
+  release_desktop:
+    needs: [build_linux, build_osx, build_windows]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: linux
+
+      - name: Download Mac artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: osx
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: windows
+
+      - name: Publish Linux
+        uses: KikimoraGames/itch-publish@v0.0.3
+        with:
+          butlerApiKey: ${{inputs.itchKey}}
+          gameData: linux.zip
+          itchUsername: ${{inputs.itchUsername}}
+          itchGameId: ${{inputs.itchGameId}}
+          buildChannel: linux
+
+      - name: Publish Windows
+        uses: KikimoraGames/itch-publish@v0.0.3
+        with:
+          butlerApiKey: ${{inputs.itchKey}}
+          gameData: windows.zip
+          itchUsername: ${{inputs.itchUsername}}
+          itchGameId: ${{inputs.itchGameId}}
+          buildChannel: windows
+
+      - name: Publish OSX
+        uses: KikimoraGames/itch-publish@v0.0.3
+        with:
+          butlerApiKey: ${{inputs.itchKey}}
+          gameData: osx.zip
+          itchUsername: ${{inputs.itchUsername}}
+          itchGameId: ${{inputs.itchGameId}}
+          buildChannel: osx
