@@ -1,10 +1,5 @@
 name: 'Deploy Flutter Desktop builds to Itch.io'
 description: 'Automates the build and deployment of your Flutter desktop applications to Itch.io'
-author: 'bluefireteam'
-
-branding:
-  color: blue
-  icon: code
 
 on:
   workflow_call:
