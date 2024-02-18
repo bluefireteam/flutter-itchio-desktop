@@ -5,6 +5,7 @@ author: 'bluefireteam'
 branding:
   color: blue
   icon: code
+
 on:
   workflow_call:
     inputs:
@@ -14,9 +15,6 @@ on:
       itchGameId:
         description: 'The game id on itch.io'
         required: true
-      itchKey:
-        description: 'The buttler key of your itch.io account'
-        required: true
       macOSAppName:
         description: 'The name of .app file of your project. (e.g. "My App.app")'
         required: true
@@ -24,6 +22,10 @@ on:
         description: 'The directory where the project is (default .)'
         required: false
         default: .
+    secrets:
+      itchKey:
+        description: 'The buttler key of your itch.io account'
+        required: true
 
 jobs:
   build_linux:
@@ -115,7 +117,7 @@ jobs:
       - name: Publish Linux
         uses: KikimoraGames/itch-publish@v0.0.3
         with:
-          butlerApiKey: ${{ inputs.itchKey }}
+          butlerApiKey: ${{ secrets.itchKey }}
           gameData: linux.zip
           itchUsername: ${{ inputs.itchUsername }}
           itchGameId: ${{ inputs.itchGameId }}
@@ -124,7 +126,7 @@ jobs:
       - name: Publish Windows
         uses: KikimoraGames/itch-publish@v0.0.3
         with:
-          butlerApiKey: ${{ inputs.itchKey }}
+          butlerApiKey: ${{ secrets.itchKey }}
           gameData: windows.zip
           itchUsername: ${{ inputs.itchUsername }}
           itchGameId: ${{ inputs.itchGameId }}
@@ -133,7 +135,7 @@ jobs:
       - name: Publish OSX
         uses: KikimoraGames/itch-publish@v0.0.3
         with:
-          butlerApiKey: ${{ inputs.itchKey }}
+          butlerApiKey: ${{ secrets.itchKey }}
           gameData: osx.zip
           itchUsername: ${{ inputs.itchUsername }}
           itchGameId: ${{ inputs.itchGameId }}
