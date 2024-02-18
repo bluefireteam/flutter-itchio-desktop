@@ -5,24 +5,25 @@ author: 'bluefireteam'
 branding:
   color: blue
   icon: code
-
-inputs:
-  itchUsername:
-    description: 'The itch.io username'
-    required: true
-  itchGameId:
-    description: 'The game id on itch.io'
-    required: true
-  itchKey:
-    description: 'The buttler key of your itch.io account'
-    required: true
-  macOSAppName:
-    description: 'The name of .app file of your project. (e.g. "My App.app")'
-    required: true
-  workingDir:
-    description: 'The directory where the project is (default .)'
-    required: false
-    default: .
+on:
+  workflow_call:
+    inputs:
+      itchUsername:
+        description: 'The itch.io username'
+        required: true
+      itchGameId:
+        description: 'The game id on itch.io'
+        required: true
+      itchKey:
+        description: 'The buttler key of your itch.io account'
+        required: true
+      macOSAppName:
+        description: 'The name of .app file of your project. (e.g. "My App.app")'
+        required: true
+      workingDir:
+        description: 'The directory where the project is (default .)'
+        required: false
+        default: .
 
 jobs:
   build_linux:
