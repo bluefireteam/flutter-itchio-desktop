@@ -23,7 +23,6 @@ on:
     secrets:
       itchKey:
         description: 'The buttler key of your itch.io account'
-        type: string
         required: true
 
 jobs:
