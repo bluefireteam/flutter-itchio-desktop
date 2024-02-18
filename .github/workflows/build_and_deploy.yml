@@ -5,20 +5,25 @@ on:
     inputs:
       itchUsername:
         description: 'The itch.io username'
+        type: string
         required: true
       itchGameId:
         description: 'The game id on itch.io'
+        type: string
         required: true
       macOSAppName:
         description: 'The name of .app file of your project. (e.g. "My App.app")'
+        type: string
         required: true
       workingDir:
         description: 'The directory where the project is (default .)'
+        type: string
         required: false
         default: .
     secrets:
       itchKey:
         description: 'The buttler key of your itch.io account'
+        type: string
         required: true
 
 jobs:
