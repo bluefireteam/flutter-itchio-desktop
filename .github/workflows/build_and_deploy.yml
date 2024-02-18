@@ -84,7 +84,7 @@ jobs:
         working-directory: ${{ inputs.workingDir }}
       - name: Zips the build
         run: zip -r osx.zip ${{ inputs.macOSAppName }}
-        working-directory: ${{ inputs.workingDir }}
+        working-directory: ${{ inputs.workingDir }}/build/macos/Build/Products/Release
       - name: Upload binary
         uses: actions/upload-artifact@v2
         with:
