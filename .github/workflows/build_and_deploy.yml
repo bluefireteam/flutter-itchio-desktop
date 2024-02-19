@@ -65,7 +65,7 @@ jobs:
       - name: Zips the build
         uses: papeloto/action-zip@v1
         with:
-          files: ${{ inputs.workingDir }}/build/windows/runner/Release/
+          files: ${{ inputs.workingDir }}/build/windows/x64/runner/Release/
           dest: windows.zip
       - name: Upload binary
         uses: actions/upload-artifact@v2
