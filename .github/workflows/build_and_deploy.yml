@@ -15,6 +15,11 @@ on:
         description: 'The name of .app file of your project. (e.g. "My App.app")'
         type: string
         required: true
+        default: ''
+      aptGetPackages:
+        description: 'Additional apt-get packages to install for the linux build'
+        type: string
+        required: false
       workingDir:
         description: 'The directory where the project is (default .)'
         type: string
@@ -37,7 +42,7 @@ jobs:
 
       - run: sudo add-apt-repository universe
       - run: sudo apt-get update
-      - run: sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+      - run: sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev ${{ inputs.aptGetPackages }}
       - run: flutter build linux --release
         working-directory: ${{ inputs.workingDir }}
       - name: Zips the build
